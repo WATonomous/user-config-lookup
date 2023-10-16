@@ -1,0 +1,5 @@
+services:
+  user-config-lookup:
+    build: .
+    ports:
+      - "5500:5500"
