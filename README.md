@@ -5,7 +5,7 @@
 Running the container:
 
 ```bash
-docker compose up
+docker compose up --build
 ```
 
 Stopping the container:
