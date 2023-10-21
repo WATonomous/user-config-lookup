@@ -1,23 +1,28 @@
 from typing import Union
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+import os
 from pydantic import BaseModel
+import logging
 from logging.config import dictConfig
 from app.logging.config import log_config
 from app.utils import generate_email_map
 from app.email import send_email
+from dotenv import load_dotenv
 
-
-email_to_file = generate_email_map()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # loop through all emails and map them to a filename
+    # In case we need to do some initial setup
     yield
 
 
 dictConfig(log_config)
-app = FastAPI(lifespan=lifespan, debug=True)
+secrets_path = os.getenv("SECRETS_PATH")
+load_dotenv(secrets_path)
+logger = logging.getLogger('app-logger')
+email_to_file = generate_email_map()
+app = FastAPI(lifespan=lifespan)
 
 
 class Email(BaseModel):
@@ -29,16 +34,15 @@ def read_root():
     return {"Hello": "OMG"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return str(email_to_file)[0:1000]
-
-
 @app.post("/send-edit-link")
 def send_edit_link(email: Email):
+    return_msg = (
+        "We received your email address and will be sending you an edit"
+        " link shortly!"
+    )
     email_address = email.email_address
     if email_address not in email_to_file:
-        return "sus"
+        return return_msg
     file_path = email_to_file[email_address]
     send_email(file_path)
     return file_path
