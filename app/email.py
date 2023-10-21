@@ -24,14 +24,18 @@ def generate_edit_link(file_path: str) -> str:
     return edit_link
 
 
+def generate_email_content(edit_link: str):
+    return f"Sent via aiosmtplib! Here's your edit link: {edit_link}"
+
+
 def send_email(file_path: str) -> None:
     edit_link = generate_edit_link(file_path)
 
     message = EmailMessage()
-    message["From"] = "root@localhost"
+    message["From"] = "onboarding-noreply@watonomous.ca"
     message["To"] = "j257jian@watonomous.ca"
     message["Subject"] = "Hello World!"
-    message.set_content("Sent via aiosmtplib")
+    message.set_content(generate_email_content(edit_link))
 
     username = os.getenv("EMAIL_ADDRESS")
     password = os.getenv("EMAIL_PASSWORD")
@@ -42,7 +46,7 @@ def send_email(file_path: str) -> None:
     # asyncio.run(aiosmtplib.send(
     #     message, 
     #     hostname="smtp.gmail.com", 
-    #     port=567,
+    #     port=587,
     #     username=username,
     #     password=password
     # ))

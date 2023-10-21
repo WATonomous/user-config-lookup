@@ -11,6 +11,6 @@ services:
     secrets:
       - env-file
 secrets: 
-  # a .env file is required to hold auth info for the email bot
+  # a .env file is required to hold auth info for the email provider
   env-file:
     file: .env

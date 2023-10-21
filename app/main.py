@@ -18,9 +18,9 @@ async def lifespan(app: FastAPI):
 
 
 dictConfig(log_config)
+logger = logging.getLogger('app-logger')
 secrets_path = os.getenv("SECRETS_PATH")
 load_dotenv(secrets_path)
-logger = logging.getLogger('app-logger')
 email_to_file = generate_email_map()
 app = FastAPI(lifespan=lifespan)
 

@@ -9,7 +9,7 @@ logger = logging.getLogger('app-logger')
 
 def generate_email_map() -> Union[dict, None]:
     """
-    returns a map of user emails (lowercased)
+    returns a map of lowercased user emails
     to the corresponding file path where their 
     user config yml file is
     """
