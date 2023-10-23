@@ -1,0 +1,16 @@
+services:
+  user-config-lookup:
+    build: .
+    ports:
+      - "5500:5500"
+    volumes:
+      - ./data:/data
+    environment:
+      DIRECTORY_PATH: "/data"
+      SECRETS_PATH: "/run/secrets/env-file"
+    secrets:
+      - env-file
+secrets: 
+  # a .env file is required to hold auth info for the email provider
+  env-file:
+    file: .env
