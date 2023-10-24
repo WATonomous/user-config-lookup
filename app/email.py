@@ -2,7 +2,6 @@ import logging
 import yaml
 import json
 import os
-import asyncio
 import aiosmtplib
 from urllib.parse import quote
 from email.message import EmailMessage
@@ -28,7 +27,7 @@ def generate_email_content(edit_link: str):
     return f"Sent via aiosmtplib! Here's your edit link: {edit_link}"
 
 
-def send_email(file_path: str) -> None:
+async def send_email(file_path: str) -> None:
     edit_link = generate_edit_link(file_path)
 
     message = EmailMessage()
@@ -43,11 +42,10 @@ def send_email(file_path: str) -> None:
         logger.error("environent variables for email credentials not set!")
         return
     
-    # asyncio.run(aiosmtplib.send(
-    #     message, 
-    #     hostname="smtp.gmail.com", 
-    #     port=587,
-    #     username=username,
-    #     password=password
-    # ))
-    return
+    await aiosmtplib.send(
+        message, 
+        hostname="smtp.gmail.com", 
+        port=587,
+        username=username,
+        password=password
+    )

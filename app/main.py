@@ -1,6 +1,6 @@
 from typing import Union
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 import os
 from pydantic import BaseModel
 import logging
@@ -35,7 +35,7 @@ def read_root():
 
 
 @app.post("/send-edit-link")
-def send_edit_link(email: Email):
+async def send_edit_link(email: Email, background_tasks: BackgroundTasks):
     return_msg = (
         "We received your email address and will be sending you an edit"
         " link shortly!"
@@ -44,5 +44,5 @@ def send_edit_link(email: Email):
     if email_address not in email_to_file:
         return return_msg
     file_path = email_to_file[email_address]
-    send_email(file_path)
+    background_tasks.add_task(send_email, file_path)
     return file_path
