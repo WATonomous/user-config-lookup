@@ -42,7 +42,9 @@ async def send_edit_link(email: Email, background_tasks: BackgroundTasks):
     )
     email_address = email.email_address
     if email_address not in email_to_file:
+        logger.info(f"email {email_address} not found in directory")
         return return_msg
     file_path = email_to_file[email_address]
     background_tasks.add_task(send_email, file_path)
-    return file_path
+    logger.info(f"email found in directory with path: {file_path}")
+    return return_msg
