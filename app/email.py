@@ -27,12 +27,12 @@ def generate_email_content(edit_link: str):
     return f"Sent via aiosmtplib! Here's your edit link: {edit_link}"
 
 
-async def send_email(file_path: str) -> None:
+async def send_email(file_path: str, email_address: str) -> None:
     edit_link = generate_edit_link(file_path)
 
     message = EmailMessage()
     message["From"] = "onboarding-noreply@watonomous.ca"
-    message["To"] = "j257jian@watonomous.ca"
+    message["To"] = email_address
     message["Subject"] = "Hello World!"
     message.set_content(generate_email_content(edit_link))
 
