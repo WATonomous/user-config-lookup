@@ -11,12 +11,12 @@ from app.constants import user_directory
 logger = logging.getLogger('app-logger')
 
 
-def generate_edit_link(file_idx: int) -> str:
-    config_json_string = json.dumps(user_directory[file_idx])
+def generate_edit_link(user_config: dict) -> str:
+    config_json_string = json.dumps(user_config)
     config_json_string_encoded = quote(config_json_string)
     base_url = "https://watonomous.github.io/infra-config/onboarding-form"
     edit_link = f"{base_url}/?initialFormData={config_json_string_encoded}"
-    logger.debug(f"Edit link: {edit_link}")
+    logger.debug(f"Edit link (truncated): {edit_link[0:100]}...")
 
     return edit_link
 
@@ -25,8 +25,8 @@ def generate_email_content(edit_link: str):
     return f"Sent via aiosmtplib! Here's your edit link: {edit_link}"
 
 
-async def send_email(config_idx: int, email_address: str) -> None:
-    edit_link = generate_edit_link(config_idx)
+async def send_email(user_config: dict, email_address: str) -> None:
+    edit_link = generate_edit_link(user_config)
 
     message = EmailMessage()
     message["From"] = "onboarding-noreply@watonomous.ca"

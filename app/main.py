@@ -21,7 +21,7 @@ dictConfig(log_config)
 logger = logging.getLogger('app-logger')
 secrets_path = os.getenv("SECRETS_PATH")
 load_dotenv(secrets_path)
-email_to_index = generate_email_map()
+email_to_user = generate_email_map()
 app = FastAPI(lifespan=lifespan)
 
 
@@ -41,10 +41,10 @@ async def send_edit_link(email: Email, background_tasks: BackgroundTasks):
         " link shortly!"
     )
     email_address = email.email_address
-    if email_address not in email_to_index:
+    if email_address not in email_to_user:
         logger.info(f"email {email_address} not found in directory")
         return return_msg
-    user_config_index = email_to_index[email_address]
-    background_tasks.add_task(send_email, user_config_index, email_address)
-    logger.info(f"email found in directory at index: {user_config_index}")
+    user_config = email_to_user[email_address]
+    background_tasks.add_task(send_email, user_config, email_address)
+    logger.info(f"user config (truncated): {str(user_config)[0:100]}...")
     return return_msg
