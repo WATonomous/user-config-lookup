@@ -30,7 +30,7 @@ async def send_email(config_idx: int, email_address: str) -> None:
 
     message = EmailMessage()
     message["From"] = "onboarding-noreply@watonomous.ca"
-    message["To"] = "j257jian@uwaterloo.ca"
+    message["To"] = email_address
     message["Subject"] = "Hello World!"
     message.set_content(generate_email_content(edit_link))
 
