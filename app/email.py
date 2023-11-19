@@ -1,4 +1,3 @@
-from email.mime.text import MIMEText
 import logging
 import json
 import os
@@ -30,15 +29,17 @@ def generate_email_content(edit_link: str, user_config: dict):
         f"<html>"
         f"<head></head>"
         f"<body><p>"
-        f"Hello {first_name},<br><br>" 
-        f"As requested, here is the link to edit your WATcloud user config:<br>"
+        f"Hello {first_name},<br><br>"
+        f"Greetings from WATcloud! Your WATcloud user config edit link is ready for you:<br>"
         f"<a href=\"{edit_link}\">Edit Link</a><br><br>"
-        f"Thanks,<br>"
+        f"If you have any questions or need assistance, don't hesitate to reach out" 
+        f" to your WATcloud contact or the WATcloud team at"
+        f" <a href=\"mailto:infra-outreach@watonomous.ca\">infra-outreach@watonomous.ca</a>.<br><br>"
+        f"Vroom vroom,<br>"
         f"WATcloud Team.<br>"
         f"</p></body>"
         f"<html>"
     )
-    # return f"Sent via aiosmtplib! Here's your edit link: {edit_link}"
     return email_body
 
 
@@ -49,6 +50,7 @@ async def send_email(user_config: dict, email_address: str) -> None:
     message["From"] = "onboarding-noreply@watonomous.ca"
     message["To"] = email_address
     message["Subject"] = "WATcloud User Config Edit Link"
+    message["Reply-To"] = "infra-outreach@watonomous.ca"
     message.set_content(generate_email_content(edit_link, user_config), subtype='html')
 
     username = os.getenv("EMAIL_ADDRESS")
