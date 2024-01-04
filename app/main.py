@@ -9,6 +9,7 @@ from app.logging.config import log_config
 from app.utils import generate_email_map
 from app.email import send_email
 from dotenv import load_dotenv
+from sentry_sdk.integrations.logging import LoggingIntegration
 
 
 @asynccontextmanager
@@ -24,6 +25,23 @@ load_dotenv(secrets_path)
 email_to_user = generate_email_map()
 app = FastAPI(lifespan=lifespan)
 
+
+# Setup sentry logging
+sentry_logging = LoggingIntegration(
+    level=logging.INFO,        # Capture info and above as breadcrumbs
+    event_level=logging.ERROR  # Send errors as events
+)
+sentry_sdk.init(
+    dsn=os.environ["SENTRY_DSN"],
+    integrations=[
+        sentry_logging,
+    ],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production,
+    traces_sample_rate=1.0,
+)
 
 class Email(BaseModel):
     email_address: str
