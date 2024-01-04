@@ -23,13 +23,12 @@ def generate_email_content(edit_link: str, user_config: dict):
     name: str = user_config.get("general", {}).get("name")
     if name is None:
         name = "WATcloud user"
-    first_name:str = name.split(" ")[0]
 
     email_body = (
         f"<html>"
         f"<head></head>"
         f"<body><p>"
-        f"Hello {first_name},<br><br>"
+        f"Hello {name},<br><br>"
         f"Greetings from WATcloud! Your WATcloud user config edit link is ready for you:<br>"
         f"<a href=\"{edit_link}\">Edit Link</a><br><br>"
         f"If you have any questions or need assistance, don't hesitate to reach out" 

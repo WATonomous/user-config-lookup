@@ -1,5 +1,5 @@
 uvicorn>=0.23.2
 fastapi>=0.104.0
 PyYAML>=6.0.1
-aiosmtplib>=2.0.2
+aiosmtplib>=3.0.1
 python-dotenv>=1.0.0
