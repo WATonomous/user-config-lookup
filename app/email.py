@@ -1,11 +1,9 @@
 import logging
-import yaml
 import json
 import os
 import aiosmtplib
-from urllib.parse import quote
+import base64
 from email.message import EmailMessage
-from app.constants import user_directory
 
 
 logger = logging.getLogger('app-logger')
@@ -13,16 +11,35 @@ logger = logging.getLogger('app-logger')
 
 def generate_edit_link(user_config: dict) -> str:
     config_json_string = json.dumps(user_config)
-    config_json_string_encoded = quote(config_json_string)
-    base_url = "https://watonomous.github.io/infra-config/onboarding-form"
-    edit_link = f"{base_url}/?initialFormData={config_json_string_encoded}"
+    config_b64_string = base64.b64encode(config_json_string.encode()).decode()
+    base_url = "https://cloud.watonomous.ca/docs/utilities/onboarding-form"
+    edit_link = f"{base_url}?initialformdatab64={config_b64_string}"
     logger.debug(f"Edit link (truncated): {edit_link[0:100]}...")
 
     return edit_link
 
 
-def generate_email_content(edit_link: str):
-    return f"Sent via aiosmtplib! Here's your edit link: {edit_link}"
+def generate_email_content(edit_link: str, user_config: dict):
+    name: str = user_config.get("general", {}).get("name")
+    if name is None:
+        name = "WATcloud user"
+
+    email_body = (
+        f"<html>"
+        f"<head></head>"
+        f"<body><p>"
+        f"Hello {name},<br><br>"
+        f"Greetings from WATcloud! Your WATcloud user config edit link is ready for you:<br>"
+        f"<a href=\"{edit_link}\">Edit Link</a><br><br>"
+        f"If you have any questions or need assistance, don't hesitate to reach out" 
+        f" to your WATcloud contact or the WATcloud team at"
+        f" <a href=\"mailto:infra-outreach@watonomous.ca\">infra-outreach@watonomous.ca</a>.<br><br>"
+        f"Vroom vroom,<br>"
+        f"WATcloud Team.<br>"
+        f"</p></body>"
+        f"<html>"
+    )
+    return email_body
 
 
 async def send_email(user_config: dict, email_address: str) -> None:
@@ -31,8 +48,9 @@ async def send_email(user_config: dict, email_address: str) -> None:
     message = EmailMessage()
     message["From"] = "onboarding-noreply@watonomous.ca"
     message["To"] = email_address
-    message["Subject"] = "Hello World!"
-    message.set_content(generate_email_content(edit_link))
+    message["Subject"] = "WATcloud User Config Edit Link"
+    message["Reply-To"] = "infra-outreach@watonomous.ca"
+    message.set_content(generate_email_content(edit_link, user_config), subtype='html')
 
     username = os.getenv("EMAIL_ADDRESS")
     password = os.getenv("EMAIL_PASSWORD")

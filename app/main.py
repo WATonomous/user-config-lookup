@@ -58,7 +58,7 @@ async def send_edit_link(email: Email, background_tasks: BackgroundTasks):
         "We received your email address and will be sending you an edit"
         " link shortly!"
     )
-    email_address = email.email_address
+    email_address = email.email_address.lower()
     if email_address not in email_to_user:
         logger.info(f"email {email_address} not found in directory")
         return return_msg
