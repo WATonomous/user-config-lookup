@@ -2,7 +2,7 @@ import logging
 import json
 import os
 import aiosmtplib
-from urllib.parse import quote
+import base64
 from email.message import EmailMessage
 
 
@@ -11,9 +11,9 @@ logger = logging.getLogger('app-logger')
 
 def generate_edit_link(user_config: dict) -> str:
     config_json_string = json.dumps(user_config)
-    config_json_string_encoded = quote(config_json_string)
-    base_url = "https://watonomous.github.io/infra-config/onboarding-form"
-    edit_link = f"{base_url}/?initialFormData={config_json_string_encoded}"
+    config_b64_string = base64.b64encode(config_json_string.encode()).decode()
+    base_url = "https://cloud.watonomous.ca/docs/utilities/onboarding-form"
+    edit_link = f"{base_url}?initialformdatab64={config_b64_string}"
     logger.debug(f"Edit link (truncated): {edit_link[0:100]}...")
 
     return edit_link
