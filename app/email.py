@@ -11,7 +11,8 @@ logger = logging.getLogger('app-logger')
 
 def generate_edit_link(user_config: dict) -> str:
     config_json_string = json.dumps(user_config)
-    config_b64_string = base64.b64encode(config_json_string.encode()).decode()
+    encoded_json = config_json_string.encode()
+    config_b64_string = base64.urlsafe_b64encode(encoded_json).decode()
     base_url = "https://cloud.watonomous.ca/docs/utilities/onboarding-form"
     edit_link = f"{base_url}?initialformdatab64={config_b64_string}"
     logger.debug(f"Edit link (truncated): {edit_link[0:100]}...")
